@@ -14,6 +14,7 @@ The Shinning, Stanley Kubrick 1980
 
 ### Imagen de referencia de proyecto
 
+<img src="assets/img/AfichePensamiento.jpg" width="400">
 <!-- Deja acá una imagen de la "portada" de tu proyecto. Como si fuera un afiche. Puede ser un fotograma de toda la interacción. -->
 
 ### Integrantes
@@ -33,6 +34,9 @@ Danny atrapado entre su don psíquicoy su violento entorno familiar, se ve jugan
 ### Storyboard
 
 Imágenes del storyboard, las que deben verse acá y estar subidas en el mismo repositorio
+
+<img src="assets/img/storyboard1.jpg" width="400">
+<img src="assets/img/storyboard2.jpg" width="400">
 
 ### Estados
 
