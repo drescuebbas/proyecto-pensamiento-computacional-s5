@@ -35,8 +35,8 @@ Danny atrapado entre su don psíquicoy su violento entorno familiar, se ve jugan
 
 Imágenes del storyboard, las que deben verse acá y estar subidas en el mismo repositorio
 
-<img src="assets/img/storyboard1.jpg" width="400">
-<img src="assets/img/storyboard2.jpg" width="400">
+<img src="assets/img/storyboard1.png" width="400">
+<img src="assets/img/caminosJuego.jpeg" width="400">
 
 ### Estados
 
