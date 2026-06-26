@@ -28,6 +28,9 @@ Fernando Bazaes[fernandobzs](https://github.com/fernandobzs)
 
 <https://editor.p5js.org>
 
+<!-- no trabajamos todo en p5, porque los archivos son muy pesados (vscode)
+<!-- https://editor.p5js.org/dresCuevass/sketches/TRFBaY4y7 -->
+
 ### Relato inicial
 Danny atrapado entre su don psíquicoy su violento entorno familiar, se ve jugando en un pasillo donde tiene que tomar multiples decisiones, entre alucinaciones maleficas y escapatorias para poder salir del hotel overlook donde se está consumiendo su "resplandor". 
 
@@ -48,30 +51,102 @@ En el primer estado, con alicia frente al conejo
 
 al hacer scroll, Alicia empieza a caer
 
+En el primer estado, se encuentra a Danny rondando por los pasillos del hotel, y debe elegir una habitación a la cual acceder
+
 ```js
-//alicia cae
-function aliciaEstatica(){
-  //tu alicia quieta acá
-  if (scroll) {
-    caer();
-  }
+function dibPasillo(){
+  push();
+    translate(width/2, height/2);
+    imageMode(CENTER);
+    image(pasillo, 0, 0, width, width);
+
+    // animación danny
+    let mouseLimitado = constrain(mouseY, height/2, height);
+    dannY = mouseLimitado - height/2;
+
+    let escala = map(mouseLimitado, height/2, height, 0.3, 1.5);
+    let anchoDanny = (width/3) * escala;
+    let altoDanny = (width/3) * escala;
+
+    if (frameCount%2==0){ 
+      image(danny, 0, dannY, anchoDanny, altoDanny);
+    }
+    else{
+      //image(danny2, 0, height/4, width/3, width/3);
+      image(danny2, 0, dannY, anchoDanny, altoDanny);
+    }
+  pop();
+
+  push()
+    fill(255);
+    textSize(50);
+    textAlign(CENTER, CENTER);
+    stroke(0);
+    strokeWeight(3);
+    //text("algunawea??", width / 2, height / 2);
+    textSize(30);
+    text("haz click en alguna puerta", width/2, height*3/4);
+  pop();
+  //dibujarHitboxesPuertas();
 }
 ```
 
 
 #### Estado 2
-En este estado, el usuario ve la puerta de la habitación y debe hacer clics rápidos. Cada clic agita la pantalla y suma un punto a la variable golpesHacha.
-La condición de salida es lograr 6 golpes (clics). Al llegar a ese número, el estado cambia automáticamente para iniciar la persecución final.
+En este estado, el usuario debe scrollear hacia abajo para hacer que el ascensor se abra y permita que la sangre salga del ascensor
 
-// Lógica de transición del Hacha
-function dibujarActo4_Hacha() {
-  // ... (dibuja la puerta rompiéndose en fases) ...
+```js
+push();
+    translate(width/2, height/2); 
+    imageMode(CENTER);
+    
+    if (progresoScrollAscensor < 25) {
+      image(imgAscensorCerrado, 0, 0, width, height); 
+    } 
+    else if (progresoScrollAscensor < 50) {
+      image(imgAscensorEntreabierto, 0, 0, width, height); 
+    } 
+    else if (progresoScrollAscensor < 75) {
+      image(imgAscensorCasiAbierto, 0, 0, width, height); 
+    } 
+    else {
+      image(imgAscensorAbierto, 0, 0, width, height); 
+      
+      let sangre = map(progresoScrollAscensor, 75, 180, 0, height);
+      sangre = constrain(sangre, 0, height); 
+      
+      let tamañoPixel = width / 70; 
+      let sangreBloque = floor(sangre / tamañoPixel) * tamañoPixel; 
+      
+      fill(180, 0, 0); 
+      noStroke(); 
+      rectMode(CORNER);
+      
+      randomSeed(sangreBloque); 
+      for (let x = -width/2; x < width/2; x += tamañoPixel) {
+        let salpique = floor(random(0, 4)) * tamañoPixel; 
+        rect(x, height/2 - sangreBloque - salpique, tamañoPixel, sangreBloque + salpique);
+      }
+    }
+  pop();
   
-  // cndición de salida: al 6to golpe, corres de Jack
-  if (golpesHacha >= 6) {
-    estadoGlobal = 6; // Pasa al Laberinto
-    golpesHacha = 0; // Reinicia el contador de golpes
+  randomSeed(frameCount); 
+  
+  if (progresoScrollAscensor >= 180) {
+    estado = E.PASILLO;
+    progresoScrollAscensor = 0;
   }
-}
+
+  push()
+    fill(255);
+    textSize(50);
+    textAlign(CENTER, CENTER);
+    stroke(0);
+    strokeWeight(3);
+    //text("algunawea??", width / 2, height / 2);
+    textSize(30);
+    text("haz scroll hacia abajo para llenar con sangre", width/2, height*3/4);
+  pop();
+
 ```
 
