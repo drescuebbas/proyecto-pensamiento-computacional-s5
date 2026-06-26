@@ -68,6 +68,6 @@ function dibujarActo4_Hacha() {
     estadoGlobal = 6; // Pasa al Laberinto
     golpesHacha = 0; // Reinicia el contador de golpes
   }
-}}
+}
 ```
 

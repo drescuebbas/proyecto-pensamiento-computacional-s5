@@ -2,8 +2,8 @@
 // música del OST de fondo
 // hacer que danny se achique cuando se acerque a la mitad de la pantalla, y que se agrande cuando se acerque al final de la pantalla
 
-const E = {INICIO:0, PASILLO: 1, ASCENSOR: 2, GEMELAS: 3, HACHA: 4, DUCHA: 5, LABERINTO: 6, MUERTE: 7}; // estados de la historia
-const NOMBRE = ['INICIO', 'PASILLO', 'ASCENSOR', 'GEMELAS', 'HACHA', 'DUCHA', 'LABERINTO', 'MUERTE'];
+const E = {INICIO:0, PASILLO: 1, ASCENSOR: 2, GEMELAS: 3, HACHA: 4, DUCHA: 5, LABERINTO: 6, MUERTE: 7, GANASTE: 8}; // estados de la historia
+const NOMBRE = ['INICIO', 'PASILLO', 'ASCENSOR', 'GEMELAS', 'HACHA', 'DUCHA', 'LABERINTO', 'MUERTE', 'GANASTE'];
 let estadoAnterior = -1;
 let estado;
 //pasillo
@@ -60,7 +60,9 @@ let temaInicio;
 let tiempoRest = 30;
 let laberintoTerminao = false;
 
-const FACTOR = 0.1;
+let imgNieve;
+
+const FACTOR = 0.3; //cambiar
 
 function preload() {
   danny = loadImage('assets/img/danny.png');
@@ -76,12 +78,17 @@ function preload() {
   imgPuertaJohnny = loadImage('assets/img/puerta_johnny.png');
   imgMapa = loadImage('assets/img/mapasinFondo.png');
   imgColision = loadImage('assets/img/mapa.png');
+  // imgMapa = loadImage('assets/img/laberinto.png');
+  // imgColision = loadImage('assets/img/laberintosinfondo.png');
   imgMuerte = loadImage('assets/img/ballroom.webp');
   temaMuerte = loadSound('assets/audio/masquerade.mp3');
-  imgInicio = loadImage('assets/img/ballroom.webp');
+  imgInicio = loadImage('assets/img/hotelFuera.jpeg');
   temaInicio = loadSound('assets/audio/home.mp3');
-  // imgGemelas = loadImage('assets/img/gemelas.png');
-  // imgGemelasSangre = loadImage('assets/img/gemelas_sangre.png');
+  imgGanador = loadImage('assets/img/ganaste.png');
+  temaGanador = loadSound('assets/audio/home.mp3');
+  imgNieve = loadImage('assets/img/nieve.png');
+  imgGemelas = loadImage('assets/img/gemelas.png');
+  imgGemelasSangre = loadImage('assets/img/gemelas_sangre.png');
 }
 
 function setup() {
@@ -89,8 +96,8 @@ function setup() {
   prevMouseY = height / 2;
 
   createCanvas(windowWidth, windowHeight);
-  //estado = E.PASILLO; // primer "acto"
-  estado = E.INICIO; // pa probar (sacar después)
+  estado = E.INICIO; // primer "acto"
+  //estado = E.LABERINTO; // pa probar (sacar después)
   frameRate(10);
 
   // pasillo
@@ -145,8 +152,7 @@ function draw() {
   background(220);
 
   //textFont('Arial');
-  
-  // falta inicio y muerte
+
   switch(estado){
     case E.INICIO:
       dibInicio();
@@ -172,21 +178,25 @@ function draw() {
     case E.MUERTE:
       dibMuerte();
       break;
+    case E.GANASTE:
+      dibGanar();
+      break;
   }
 
   prevMouseX = mouseX;
   prevMouseY = mouseY;
 
-  // debug
-  text('mouseX: ' + mouseX, 170, 30);
-  text('mouseY: ' + mouseY, 170, 50);
-  text('width: ' + width, 170, 70);
-  text('height: ' + height, 170, 90);
+  // // debug
+  // text('mouseX: ' + mouseX, 170, 30);
+  // text('mouseY: ' + mouseY, 170, 50);
+  // text('width: ' + width, 170, 70);
+  // text('height: ' + height, 170, 90);
 
   //text('estado: ' + NOMBRE[estado], 50, 30); //sacar despues
 }
 
-// modificar texto e imagen
+// cambiar foto (hotel por fuera)
+// agregar boton start
 function dibInicio(){
   if (temaInicio && !temaInicio.isPlaying()) {
     temaInicio.setVolume(0.5);
@@ -207,9 +217,9 @@ function dibInicio(){
     textAlign(CENTER, CENTER);
     stroke(0);
     strokeWeight(3);
-    text("algunawea??", width / 2, height / 2);
+    //text("algunawea??", width / 2, height / 2);
     textSize(30);
-    text("haz click para iniciar", width/2, (height/2)+40);
+    text("haz click para iniciar", width/2, height*3/4);
   pop();
 
 }
@@ -236,7 +246,18 @@ function dibPasillo(){
       image(danny2, 0, dannY, anchoDanny, altoDanny);
     }
   pop();
-  dibujarHitboxesPuertas();
+
+  push()
+    fill(255);
+    textSize(50);
+    textAlign(CENTER, CENTER);
+    stroke(0);
+    strokeWeight(3);
+    //text("algunawea??", width / 2, height / 2);
+    textSize(30);
+    text("haz click en alguna puerta", width/2, height*3/4);
+  pop();
+  //dibujarHitboxesPuertas();
 }
 
 function dibHitboxes(){
@@ -306,6 +327,17 @@ function dibAscensor(){
     estado = E.PASILLO;
     progresoScrollAscensor = 0;
   }
+
+  push()
+    fill(255);
+    textSize(50);
+    textAlign(CENTER, CENTER);
+    stroke(0);
+    strokeWeight(3);
+    //text("algunawea??", width / 2, height / 2);
+    textSize(30);
+    text("haz scroll hacia abajo para llenar con sangre", width/2, height*3/4);
+  pop();
 }
 
 // meter imagenes gmelas
@@ -322,7 +354,7 @@ function dibGemelas(){
     let altoZoom = height * acercamiento;
     
     if (acercamiento < 2.2) {
-      // image(imgGemelas, 0, 0, anchoZoom, altoZoom);
+      image(imgGemelas, 0, 0, anchoZoom, altoZoom);
 
       fill(255);
       textSize(20);
@@ -332,7 +364,7 @@ function dibGemelas(){
       if (frameCount % 4 < 2) {
         image(imgGemelasSangre, 0, 0, anchoZoom, altoZoom);
       } else {
-        // image(imgGemelas, 0, 0, anchoZoom, altoZoom);
+        image(imgGemelas, 0, 0, anchoZoom, altoZoom);
       }
     }
   pop();
@@ -373,11 +405,25 @@ function dibHacha(){
     estado = E.LABERINTO;
     golpesHacha = 0; 
   }
+
+  push()
+    fill(255);
+    textSize(50);
+    textAlign(CENTER, CENTER);
+    stroke(0);
+    strokeWeight(3);
+    //text("algunawea??", width / 2, height / 2);
+    textSize(30);
+    text("haz click para romper la puerta", width/2, height*3/4);
+  pop();
 }
 
 // ver codigo mio actualizado 
 // cambiar imagen laberinto
 function dibLaberinto(dx, dy) {
+
+  ptoX = width*0.1;
+  ptoY = height*0.14;
   
   // descontar tiempo
   if (frameCount % 60 === 0 && tiempoRest > 0) {
@@ -400,17 +446,29 @@ function dibLaberinto(dx, dy) {
   let colorDetectado = mapaOculto.get(eliX, eliY);
   
   if (colorDetectado[0] > 200) {
-    background(0, 100, 250); 
+    //background(0, 100, 250); 
+    image(imgNieve, 0, 0, width + 100, height);
+
   } 
   // cambiar coordenadas y tambien que cuando llegue al final muestre mensaje de victoria
-  else if (eliX > 532 && eliX < 557 && eliY > 344 && eliY < 354){ 
-    background(0, 250, 10); 
-  }
+  // else if (eliX > width*0.87 && eliY > height*0.87){ 
+  // //else if (eliX > 532 && eliX < 557 && eliY > 344 && eliY < 354){ 
+  //   background(0, 250, 10); 
+  //   text('final', width/2, height/2);
+  // }
   else {
-    background(250, 50, 50);  
+    //background(250, 50, 50);  
+    image(imgNieve, 0, 0, width + 100, height);
     tiempoRest = tiempoRest-2;
     eliX = ptoX;
     eliY = ptoY;
+  }
+
+  if (eliX > width*0.87 && eliY > height*0.87){ 
+  //else if (eliX > 532 && eliX < 557 && eliY > 344 && eliY < 354){ 
+    //background(0, 250, 10); 
+    //text('final', width/2, height/2);
+    estado = E.GANASTE; // cambiar inicio por ganaste
   }
   
   imageMode(CORNER);
@@ -424,6 +482,17 @@ function dibLaberinto(dx, dy) {
   textSize(24);
   textAlign(RIGHT, TOP);
   text("tiempo: " + tiempoRest, width - 20, 20); 
+
+  push()
+    fill(255);
+    textSize(50);
+    textAlign(CENTER, CENTER);
+    stroke(0);
+    strokeWeight(3);
+    //text("algunawea??", width / 2, height / 2);
+    textSize(30);
+    text("jack te está persiguiendo!\n arrastra el círculo hasta el final", width/2, height*3/4);
+  pop();
 }
 
 // ver codigo fernan2 actualizado
@@ -477,8 +546,6 @@ function dibMuerte(){
     textSize(30);
     text("haz click para volver al inicio", width/2, (height/2)+40);
   pop();
-
-  // agregar boton para reiniciar el juego AQUI
 }
 
 function dibujarHitboxesPuertas() { // SACAR (ocultar)
@@ -503,6 +570,32 @@ function dibujarHitboxesPuertas() { // SACAR (ocultar)
   rect(width * 0.80, height/2, 80, 200);
   fill(255);
   text("Acto 5\n(Ducha)", width * 0.80, height/2 - 50);
+}
+
+function dibGanar(){
+  if (temaGanador && !temaGanador.isPlaying()) {
+    temaGanador.setVolume(0.5);
+    temaGanador.play();
+  }
+
+  background(220);
+
+  push();
+    translate(width/2, height/2);
+    imageMode(CENTER);
+    image(imgGanador, 0, 0, width + 100, height);
+  pop();
+
+  push()
+    fill(255, 0, 0);
+    textSize(50);
+    textAlign(CENTER, CENTER);
+    stroke(0);
+    strokeWeight(3);
+    //text("HAS MUERTO", width / 2, height / 2);
+    textSize(30);
+    text("haz click para volver al inicio", width/2, (height-height/4));
+  pop();
 }
 
 function mousePressed(){
@@ -542,6 +635,10 @@ function mousePressed(){
   else if (estado == E.INICIO){
     estado = E.PASILLO;
     temaInicio.stop();
+  }
+  else if (estado == E.GANASTE){
+    estado = E.PASILLO;
+    temaGanador.stop();
   }
 }
 
